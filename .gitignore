@@ -1,0 +1,8 @@
+.vscode/
+venv/
+*.pyc
+**.pyc
+
+python_notes/_build
+python_notes/_static
+python_notes/_templates
