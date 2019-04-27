@@ -61,7 +61,7 @@ Bu yerda Person(Odam) haqida informatiyani o'zida saqlovchi oddiy class misol ke
 
 Biz class definition i ni ``class`` keyword i bilan boshlaymiz, undan keyin class nomi va 2 nuqta(:). Biz 2 nuqtadan oldingi qavslar orasiga **parent** class larni list qilib berishimiz mumkin, biroq bu misoldagi klass da hali ular yo'q, shunday ekan bu haqaida batafsil keyinroq.
 
-Class ni ichida, ikkita funksiya yozamiz - bu bizning object larimizning methodlari. Birinchisi ``__init__``, maxsus method. Biz class object ini chaqirganimizda, class dan yangi **instance** yaratiladi, va darrov bu yangi objectda biz class objectiga bergan barcha parametrlarimiz bilan  `__init__`` methodi ishlaydi. Bu method ning maqsadi biz bergan data bilan yangi objectni sozlash.
+Class ni ichida, ikkita funksiya yozamiz - bu bizning object larimizning methodlari. Birinchisi ``__init__``, maxsus method. Biz class object ini chaqirganimizda, class dan yangi **instance** yaratiladi, va darrov bu yangi objectda biz class objectiga bergan barcha parametrlarimiz bilan  ``__init__`` methodi ishlaydi. Bu method ning maqsadi biz bergan data bilan yangi objectni sozlash.
 
 Ikkinchi method bu odamning tug'ilgan kuni va hozirgi vaqtdan foydalanib uning yoshini hisoblaydigan method.
 
@@ -275,8 +275,8 @@ Shuni esda tutingki method definition lari class attribute lari bilan bitta scop
 
 Class method lari ham bo'ladimi? Ha. KEyingi qismda ularni qanday qilib decorator bilan define qilish ni ko'amiz.
 
-Exercise 3
-----------
+Mashq 3
+-------
 
 
 #. ``name``, ``surname`` and ``profession`` attribute lari orasidagi farqni tushuntiring va ular class ning turli instance larida qanday qiymatlar olishi mumkin::
@@ -436,7 +436,264 @@ Mashq 4
 #. ``Numbers`` nomli class yarating, bittagina ``MULTIPLIER`` degan class attribute  ,  ``x`` va ``y`` (ikkalasi ham sonlar bo'lishi kerak) parameter larini oladigan construktor bo'lsin.
 
     #. ``x`` va ``y`` yig'indisini qaytaradigan ``add`` methodini yozing 
-    #. Bitta  ``a`` parameterni oladigna va uni ``MULTIPLIER``ga ko'paytirib qaytaradigan ``multiply`` nomli method yozing.
+    #. Bitta  ``a`` parameterni oladigan va uni ``MULTIPLIER`` ga ko'paytirib qaytaradigan ``multiply`` nomli method yozing.
     #. ``b`` va ``c`` parameterlarni olib ,  ``b`` - ``c`` ni qaytaradigan ``subtract`` nomli static method yozing.
     #. ``x`` va ``y`` ning qiymatini tuple qilib qaytaradigan ``value`` methodini yozing. Bu methodni property qiling, ``x`` va ``y`` ningqiymatlarini boshqaradigan setter va deleter yozing.
 
+
+Object ni tadqiq etish(yaxshilab o'rganish)
+===========================================
+
+Biz objectda qanaqa property lar mavjudligini ``dir`` funksiyasi bilan tekshirishimiz mumkin::
+
+    class Person:
+        def __init__(self, name, surname):
+            self.name = name
+            self.surname = surname
+
+        def fullname(self):
+            return "%s %s" % (self.name, self.surname)
+
+    jane = Person("Jane", "Smith")
+
+    print(dir(jane))    
+
+
+Bu natijada biz attribut va method larni ko'rishimiz mumkin -- lekin bu yerdagi boshqa narsalar nima? Biz *inheritance* (meroslik) ni keyingi bo'limda ko'ramiz, lekin hozircha siz bilishingiz kerak bo'lgan narsa shuki: siz explicit(ataylab) aytmagan bo'lsangizda siz yozgan istalgan class ning ``object`` degan parent class mavjud -- demak, sizning class ingiz boshqa Python object laridek  bir necha default attribute va methodlar i bor.
+ 
+.. Note:: Python 2 da biz ``object`` classidan explicit(ataylab) *inherit* qilib olishga majbur edik, bo'lmasa bizning classimiz o'zimiz yozgan method va atrributlardan tashqari bo'm bo'sh, ortiqcha narsalari bo'lmasdi.  ``object`` class idan inherit qilinmagan class lar "old-style classes"(eski usul classlari) deyiladi va ularni ishlatish maslahat berilmasdi. Agar biz Person class ini python 2 da yozmoqchi bo'lganimizda biz birinchi qatorga ``class Person(object):`` deb yozardik. 
+
+Shuning uchun ham agar initialisation qilmoqchi bo'lmasangiz class ingizning  ``__init__`` methodini yozmasdan tashlab ketishingiz mumkin, --  ``object``  class idan inherit (meros) qilib olingan default ``__init__`` ishlatiladi. Agar siz o'zingizning ``__init__`` methodingizni yozsangiz, bu method default ni *override* (ustiga yozish) qiladi. Ba'zida biz buni *overloading* deb ataymiz.
+
+Python object idagi ko'pgina built-in default attribute va methodlarning nomlari ikkitalik underscore ``_`` bilan boshlanib tugaydi, masalan ``__init__`` yoki ``__str__`` . Bu property larning nomlari ularning maxsus ma'noni anglatishini bildiradi -- agar siz shu nomdagi attributlarni overload qilmoqchi bo'lmasangiz bunday nomdagi attributlarni yaratmang. Bu property lar ko'pincha method bo'ladi , va ba'zida *magic methods* deyiladi.
+
+Biz ``dir`` ni istalgan objectda qo'llashimiz mumkin. Siz bu funksiyani hozirgacha ko'rgan istalgan objectlarga qo'lashingiz mumkin, masalan number lar, list lar, string va funksiya lar, va ularning qanday umumiy built-in property lari borligini ko'ring.
+
+
+Bu yerda object ning maxsus property lari ga misollar:
+
+
+* ``__init__``: object ning initialisation methodi, object yaratilgan vaqtda chaqiriladi.
+* ``__str__``: objectning string ko'rinishini qaytaradigna methodi, siz object ni stringga o'girish uchun ``str``funksiyasini chaqirganingizda ishlatiladi.
+* ``__class__``: objectning classini (yoki type ini) o'zida saqlovchi attribute, objectda  ``type`` funksiyasini ishlatganingizda qaytariladigan narsa.
+* ``__eq__``: bu object boshqasiga teng lignin aniqlaydigan method. bu object kattayoki teng, kichik yoki teng , kichik ,katta va boshqa taqqoslashlarni tekshiradigan methodlar ham bor. Bu method lar object larni taqqoslashda ishlatiladi, masalan biz ikki object tengligini tekshirish uchun tenglik operatori ``==`` ini ishlatganimizda bu method chaqiriladi.
+* ``__add__`` bu objectning boshqa object ga qoshish imkonini beradigan method. Boshqa barcha arifmetik operatorlarga mos keluvchi methodlar mavhud. Barcha objectlar ham hamma arifmetik operator larni qabul qila olmaydi -- number larda hamma methodlar bo'ladi, lekin  boshqa objectlarda faqatgina bir qism operatorlar ga mos methodlar bo'lishi mumkin.
+* ``__iter__``: object ustida iterator qaytaruvchi method -- biz buni string larda, list larda va boshqa iterable  larda ko'rishimiz mumkin. Bu Object ustida ``iter`` funksiyasini bajarganda ishlaydi.
+* ``__len__``: object uzunligini hisoblaydigan method -- biz buni ketma-ket qatorlarda ko'rishimiz mumkin.Bu, object iustida ``len`` funksiyasini bajarganimizda ishlaydi.
+* ``__dict__``: objectning barcha atribute larini o'z ichiga oladigan dictionary, attribute nomalri key lar bo'ladi.Bu objectning barcha attribute lari ni iterate(aylanib chiqish) qilganimizda foydali bo'ladi. ``__dict__`` method larni, class attributlarni yoki maxsus default attributlarni(``__class__`` ga o'xshagam) o'z ichiga olmaydi.
+
+Mashq 5
+-------
+
+
+#. Ikkinchi mashqdagi ``Person`` class idan instance yarating. Bu instance da ``dir`` funksiyasini ishlating. Keyin  ``dir`` funksiyani class da ishlating.
+    
+    #. Instance ingizda ``__str__`` methodini chaqirganingizda nima bo'ladi? str funksiyaga instance parameter qilib berganda gi natija bilan hozirgi natija tengligini tekshiring.
+    #. Instance ning type qanaqa?
+    #. Class ning type i qanaqa?
+    #. Parametriga kelgan objectning baracha yozilgan attributlarining nomlari va qiymatlarini print qiladigan funksiya yozing.
+    
+Magic method larni override qilish
+==================================
+
+We have already seen how to overload the ``__init__`` method so that we can customise it to initialise our class.  We can also overload other special methods.  For example, the purpose of the ``__str__`` method is to output a useful string representation of our object. but by default if we use the ``str`` function on a person object (which will call the ``__str__`` method), all that we will get is the class name and an ID. That's not very useful!  Let's write a custom ``__str__`` method which shows the values of all of the object's properties::
+Biz ``__init__`` methodini oveload qilishni ko'rdik va biz buni class imizni initialise qilishda ishlatishimiz mumkin. Biz maxsus methodlarni ham overload qilishimiz mumkin. Masalan, ``__str__`` method ining vazifasi object ning string ko'rinishini foydali qilib ko'rsatish. Lekin default holatda , agar person object i ustida ``str `` function ni chaqirsak (``__str__`` method ni chaqiradi), biz oladigan narsa faqat class nomi bilan ID. Bu uncha foydali emas! Keling objectning barcha property larining qiymatlarini ko'rsatadigan ``__str__`` method yozamiz::
+
+    import datetime
+
+    class Person:
+        def __init__(self, name, surname, birthdate, address, telephone, email):
+            self.name = name
+            self.surname = surname
+            self.birthdate = birthdate
+
+            self.address = address
+            self.telephone = telephone
+            self.email = email
+
+        def __str__(self):
+            return "%s %s, born %s\nAddress: %s\nTelephone: %s\nEmail:%s" % (self.name, self.surname, self.birthdate, self.address, self.telephone, self.email)
+
+    jane = Person(
+        "Jane",
+        "Doe",
+        datetime.date(1992, 3, 12), # year, month, day
+        "No. 12 Short Street, Greenville",
+        "555 456 0987",
+        "jane.doe@example.com"
+    )
+
+    print(jane)
+
+
+Shuni esdasaqlangki, biz birthdate objectini output string ga %s bilan berganimizda u o'zi avtomatik ravishda stringga aylanib boradi, biz buni o'zimimz qilishimiz shart emas( agar formatni o'zgartitishni xohlamasak).
+
+Taqqoslash operatorlarini ham overload qilish foydali, toki  person objectlarimiz ustida taqqoslash operator larini ishlatishimiz mumkin. Default holatda, bizning person objectlarimiz faqat gina bir xil object bo'sagina teng hisoblanadi, va  siz  bir person objecti ikkinchisidan katta ekanligini test qila olmaysiz, sababi person objectlarining default holatdagi qatori mavjud emas.
+
+Tassavvur qiling biz person objectlarining barcha attribute qiymatlari teng bo'lsa ular teng bo'lishini xohlaymiz, va biz ularni ism familiyalari orqali alfabet ga mos holatda saralamoqchimiz. Barcha magic taqqoslash methodlari bir biridan alohida, demak agar biz ularning barchasi ishlashini xohlasak ularning barchasini overload qilishimiz kerak -- lekin baxtimizga biz tenglik methodini va sodda navbatlash methodlaridan birini yozganimizdan keyin qolganlai oson bo'ladi. Bu methodlarning har biri ikkita parameter oladi -- ``self`` hozirgi (ayni) object uchun va ``other`` ikkichi object uchun::
+
+    class Person:
+        def __init__(self, name, surname):
+            self.name = name
+            self.surname = surname
+
+        def __eq__(self, other): #  self == other ?
+            return self.name == other.name and self.surname == other.surname
+
+        def __gt__(self, other): # self > other ?
+            if self.surname == other.surname:
+                return self.name > other.name
+            return self.surname > other.surname
+
+        # endi boshqa barcha methodlarni boshidagi 2 ta method orqali ifodalashimiz mumkin.
+        def __ne__(self, other): #  self != other ?
+            return not self == other # bu self.__eq__(other) ni chaqiradi.
+
+        def __le__(self, other): #  self <= other ?
+            return not self > other # bu self.__gt__(other) ni chaqiradi.
+
+        def __lt__(self, other): # self < other?
+            return not (self > other or self == other)
+
+        def __ge__(self, other): # bu self >= other?
+            return not self < other
+
+Shuni yodda tutingki, ``other`` boshqa bir person object bo'lishi kafolatlanmagan, va biz shunday bo'lishini tekshiradigan biron bir test qo'ymadik. Bizning methodimiz boshqa objectda ``name`` yoki ``surname`` attribute lari bo'lmasa ishlamaydi, lekin ular bo'lsa taqqoslash ishlaydi. Biz bir xil type dagi objectlar bo'ladi deb o'ylab bu taqqoslash methodlarini yozishimiz kerak.
+
+Ba'zida agar ikkinchi object boshqa typeda bo;lsa osongina error chiqarib chiqib ketish mantiqan to'g'ri ko'rinadi, lekin ba'zida biz bir xil type da bo'lmagan 2 ta objectni taqqoslashimiz mumkin. Masalan, ``1`` va ``2.5``  ni taqqoslasj mantiqan to'g'ri  chunki ularning biri integer, yana biri float bo'lishiga qaramasdan,  ikkalasi ham number lar.
+
+.. Note:: Python 2 da ham individual taqqoslash methodlaridan(*rich comparisons* lari deb nomlangan) oldin ``__cmp__``  ()method i bo'lgan. Bu method agar rich comparaision lar define qilinmagan bo'lsa ishlatiladi. Siz bumi rich comparision methodlariga mos ravishda overload qilishingiz kerak, bo'lmasa turli muammolarga duch kelasiz.
+
+Mashq 6
+-------
+
+#. To'liq generic objectla yasash uchun class yozing: uning ``__init__``  methodi istalgan uzunlikdagi keyword parameterlani qabul qilishi kerak,  va ularni object nig attribute lariga sozlashi kerak, keys larni attribute nomlari sifatida. Bu class uchun ``__str__`` methodi yozing -- bu method qaytaradigan string: bu clas nomi va shu instance atttributelarining qiymatlarini bo'lsin.
+
+Mashqlarning javoblari
+======================
+
+Mashq 1 Javobi
+--------------
+
+#.
+
+    #. ``Person`` global scope da define qilingan class. Bu global variable.
+    #. ``person`` ``Person`` class i instance i. Bu ham global variable.
+    #. ``surname`` - ``__init__`` methodga yuborilgan parameter -- ``__init__`` method i scope idagi local variable.
+    #. ``self``  class ning har bir methodiga yuborilgan parameter -- instance objectdan  method ``.`` operatori bilan chaqirilganda ``self`` orniga osha instance object yuboriladi.
+    #. ``age`` - ``Person`` class ining methodi. Shu class ning scope ida local variable.
+    #. ``age``  (funksiya ichida ishlatilgan variable)  ``age`` method i ichida ishlatilgan local variable.
+    #. ``self.email``  alohida variable emas. Objectni ozida ushlab turgan varibaledan turib o'sha objectning method va attribute larini ``.`` operatori bilan chaqirishimiz mumkinlgining  misoli. Biz objectning methodlarining ichida osha object ga ``self`` variable i bilan bog'lanamiz. -- self define qilngan istalgan joyda biz ``self.email``, ``self.age()``, va h. k. larni ishlatishimiz mumkin.
+    #. ``person.email`` tepadagi jovob ning xuddi o'zi. Global scopeda person instance imizga ``person`` nomli variable bilan bo'glanganmiz. ``person`` define qilingan hamma joyda , ``person.email``, ``person.age()``, va h.k. larni ishlatishimiz mumkin.
+
+Mashq 2 Javobi
+--------------
+
+#. Mana misol uchun programma::
+
+    import datetime
+
+    class Person:
+
+        def __init__(self, name, surname, birthdate, address, telephone, email):
+            self.name = name
+            self.surname = surname
+            self.birthdate = birthdate
+
+            self.address = address
+            self.telephone = telephone
+            self.email = email
+
+            
+            # Bu qa'tiy muhim emas, lekin bu attributelarni aniq tanishtiradi.
+            self._age = None
+            self._age_last_recalculated = None
+
+            self._recalculate_age()
+
+        def _recalculate_age(self):
+            today = datetime.date.today()
+            age = today.year - self.birthdate.year
+
+            if today < datetime.date(today.year, self.birthdate.month, self.birthdate.day):
+                age -= 1
+
+            self._age = age
+            self._age_last_recalculated = today
+
+        def age(self):
+            if (datetime.date.today() > self._age_last_recalculated):
+                self._recalculate_age()
+
+            return self._age
+
+Mashq 3 Javobi
+--------------
+
+#. ``name`` har doim konstructoda sozlangan instance attribute, va har bir class instance turli xil name va qiymatga ega bo'lishi mumkin. ``surname`` har doim class attribute, va constructorda override qilib bo'lmaydi -- har bir instance ``Smith`` nomli surnamega ega bo'ladi. ``profession`` class attribute, lekin bu konstruktordagi instance attribute bilan override qilinishi mumkin. har bir instance constructorga  ``surname`` parametri bilan boshqa qiymat berilmasa ``smith``  qiymatli profession ga ega bo'ladi.
+
+Mashq 4 Javobi
+--------------
+
+
+#. Mana misol uchun programma::
+
+    class Numbers:
+        MULTIPLIER = 3.5
+
+        def __init__(self, x, y):
+            self.x = x
+            self.y = y
+
+        def add(self):
+            return self.x + self.y
+
+        @classmethod
+        def multiply(cls, a):
+            return cls.MULTIPLIER * a
+
+        @staticmethod
+        def subtract(b, c):
+            return b - c
+
+        @property
+        def value(self):
+            return (self.x, self.y)
+
+        @value.setter
+        def value(self, xy_tuple):
+            self.x, self.y = xy_tuple
+
+        @value.deleter
+        def value(self):
+            del self.x
+            del self.y
+
+Mashq 5 Javobi
+--------------
+
+#.
+
+    #. ``'<__main__.Person object at 0x7fcb233301d0>'`` ga o'xshagan narsa ko'rishingiz kerak.
+    #. ``<class '__main__.Person'>`` -- ``__main__`` siz ishlatayotgan programma uchun Python ning nomi.
+    #. ``<class 'type'>`` -- xohlagan class ``type`` tabiatanype i bor.
+    #. Here is an example program::
+
+            def print_object_attrs(any_object):
+                for k, v in any_object.__dict__.items():
+                    print("%s: %s" % (k, v))
+
+Answer to exercise 6
+--------------------
+
+#. Mana misol uchun programma::
+
+    class AnyClass:
+        def __init__(self, **kwargs):
+            for k, v in kwargs.items():
+                setattr(self, k, v)
+
+        def __str__(self):
+            attrs = ["%s=%s" % (k, v) for (k, v) in self.__dict__.items()]
+            classname = self.__class__.__name__
+            return "%s: %s" % (classname, " ".join(attrs))
